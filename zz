@@ -27,25 +27,72 @@ function InstUpdates(){
  gem install lolcat
  apt-get autoremove -y
  # Removing some duplicated sshd server configs
-# script
-wget -O /etc/pam.d/common-password "https://raw.githubusercontent.com/guardeumvpn/Qwer77/master/common-password"
-chmod +x /etc/pam.d/common-password
-# fail2ban & exim & protection
-apt-get -y install fail2ban sysv-rc-conf dnsutils dsniff zip unzip;
-wget https://github.com/jgmdev/ddos-deflate/archive/master.zip;unzip master.zip;
-cd ddos-deflate-master && ./install.sh
-service exim4 stop;sysv-rc-conf exim4 off;
-# webmin
-apt-get -y install webmin
-sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+rm -f /etc/ssh/sshd_config
+
+sleep 1
+
+# Creating a SSH server config using cat eof tricks
+cat <<'MySSHConfig' > /etc/ssh/sshd_config
+# Project FOG OpenSSH Server config
+# -blackestsaint
+Port myPORT1
+Port myPORT2
+AddressFamily inet
+ListenAddress 0.0.0.0
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+PermitRootLogin yes
+MaxSessions 1024
+PubkeyAuthentication yes
+PasswordAuthentication yes
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+ClientAliveInterval 300
+ClientAliveCountMax 2
+UseDNS no
+Banner /etc/zorro-luffy
+AcceptEnv LANG LC_*
+Subsystem   sftp  /usr/lib/openssh/sftp-server
+
+MySSHConfig
+
+sleep 2
+ # Now we'll put our ssh ports inside of sshd_config
+ sed -i "s|myPORT1|$SSH_Port1|g" /etc/ssh/sshd_config
+ sed -i "s|myPORT2|$SSH_Port2|g" /etc/ssh/sshd_config
+
+ 
+ # My workaround code to remove `BAD Password error` from passwd command, it will fix password-related error on their ssh accounts.
+ sed -i '/password\s*requisite\s*pam_cracklib.s.*/d' /etc/pam.d/common-password
+ sed -i 's/use_authtok //g' /etc/pam.d/common-password
+
+ # Some command to identify null shells when you tunnel through SSH or using Stunnel, it will fix user/pass authentication error on HTTP Injector, KPN Tunnel, eProxy, SVI, HTTP Proxy Injector etc ssh/ssl tunneling apps.
+ sed -i '/\/bin\/false/d' /etc/shells
+ sed -i '/\/usr\/sbin\/nologin/d' /etc/shells
+ echo '/bin/false' >> /etc/shells
+ echo '/usr/sbin/nologin' >> /etc/shells
+
+# Restarting openssh service
+ systemctl restart ssh
+  
+ rm -f /etc/banner
+ wget -qO /etc/banner "$SSH_Banner"
+ dos2unix -q /etc/banner
+
+sed -i '/password\s*requisite\s*pam_cracklib.s.*/d' /etc/pam.d/common-password && sed -i 's|use_authtok ||g' /etc/pam.d/common-password
+ 
 # dropbear
 apt-get -y install dropbear
 wget -O /etc/default/dropbear "https://raw.githubusercontent.com/Vpaproject/-/3aca93b3470d2da6d32d42252da74d6976267eef/dropbear"
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
- sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 
-# wget https://raw.githubusercontent.com/Vpaproject/KinGmapua/master/s4 && bash s4
+wget https://raw.githubusercontent.com/Vpaproject/KinGmapua/master/s4 && bash s4
+
  # Installing OpenVPN by pulling its repository inside sources.list file 
  #rm -rf /etc/apt/sources.list.d/openvpn*
  echo "deb http://build.openvpn.net/debian/openvpn/stable $(lsb_release -sc) main" >/etc/apt/sources.list.d/openvpn.list && apt-key del E158C569 && wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
