@@ -6,37 +6,52 @@ SSH_Banner='https://raw.githubusercontent.com/itsgelogomayee/dpndncy/master/bann
 OpenVPN_Port1='1103'
 OpenVPN_Port2='25222'
 OvpnDownload_Port='80'
+# OpenSSH Ports
 SSH_Port1='22'
-SSH_Port2='299'
-Ohp_Port='8087'
+
+# Your SSH Banner
+SSH_Banner='https://www.dropbox.com/s/01jed4dmaq7cu8b/issue.net'
+
+# Dropbear Ports
 Dropbear_Port1='800'
-Dropbear_Port2='2770'
+Dropbear_Port2='442'
+Ohp_Port='8087'
 # Server local time
 MyVPS_Time='Asia/Kuala_Lumpur'
 #############################
 
 function InstUpdates(){
- export DEBIAN_FRONTEND=noninteractive
+  export DEBIAN_FRONTEND=noninteractive
  apt-get update
  apt-get upgrade -y
- apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron net-tools dnsutils dos2unix screen bzip2 ccrypt -y
- apt-get install dropbear stunnel4 privoxy ca-certificates nginx ruby apt-transport-https lsb-release squid screenfetch -y
- apt-get install nginx ruby apt-transport-https lsb-release squid screenfetch -y
-# apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python dbus libxml-parser-perl -y
-# apt-get install shared-mime-info jq -y
+ 
+ # Removing some firewall tools that may affect other services
+ apt-get remove --purge ufw firewalld -y
+
+ 
+ # Installing some important machine essentials
+ apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron net-tools dnsutils dos2unix screen bzip2 psmisc lsof ccrypt -y
+ 
+ # Now installing all our wanted services
+ apt-get install gnupg tcpdump grepcidr gnutls-bin dropbear ocserv stunnel4 screen ca-certificates ruby apt-transport-https lsb-release squid -y
+
+ # Installing all required package
+ apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python dbus libxml-parser-perl -y
+ apt-get install shared-mime-info jq fail2ban -y
+
+ 
+ # Installing a text colorizer
  gem install lolcat
+
+ # Trying to remove obsolette packages after installation
  apt-get autoremove -y
- # Removing some duplicated sshd server configs
-rm -f /etc/ssh/sshd_config
 
-sleep 1
-
-# Creating a SSH server config using cat eof tricks
-cat <<'MySSHConfig' > /etc/ssh/sshd_config
-# Project FOG OpenSSH Server config
-# -blackestsaint
+ rm -f /etc/ssh/sshd_config
+ 
+ # Creating a SSH server config using cat eof tricks
+ cat <<'MySSHConfig' > /etc/ssh/sshd_config
+# My OpenSSH Server config
 Port myPORT1
-Port myPORT2
 AddressFamily inet
 ListenAddress 0.0.0.0
 HostKey /etc/ssh/ssh_host_rsa_key
@@ -51,45 +66,54 @@ ChallengeResponseAuthentication no
 UsePAM yes
 X11Forwarding yes
 PrintMotd no
-ClientAliveInterval 300
+ClientAliveInterval 240
 ClientAliveCountMax 2
 UseDNS no
-Banner /etc/zorro-luffy
+Banner /etc/banner
 AcceptEnv LANG LC_*
 Subsystem   sftp  /usr/lib/openssh/sftp-server
-
 MySSHConfig
 
-sleep 2
  # Now we'll put our ssh ports inside of sshd_config
  sed -i "s|myPORT1|$SSH_Port1|g" /etc/ssh/sshd_config
- sed -i "s|myPORT2|$SSH_Port2|g" /etc/ssh/sshd_config
 
- 
+ # Download our SSH Banner
+ rm -f /etc/banner
+ wget -qO /etc/banner "$SSH_Banner"
+ dos2unix -q /etc/banner
+
  # My workaround code to remove `BAD Password error` from passwd command, it will fix password-related error on their ssh accounts.
  sed -i '/password\s*requisite\s*pam_cracklib.s.*/d' /etc/pam.d/common-password
  sed -i 's/use_authtok //g' /etc/pam.d/common-password
 
  # Some command to identify null shells when you tunnel through SSH or using Stunnel, it will fix user/pass authentication error on HTTP Injector, KPN Tunnel, eProxy, SVI, HTTP Proxy Injector etc ssh/ssl tunneling apps.
  sed -i '/\/bin\/false/d' /etc/shells
- sed -i '/\/usr\/sbin\/nologin/d' /etc/shells
+ sed -i '/\/usr\/bin\/nologin/d' /etc/shells
  echo '/bin/false' >> /etc/shells
- echo '/usr/sbin/nologin' >> /etc/shells
-
-# Restarting openssh service
- systemctl restart ssh
-  
- rm -f /etc/banner
- wget -qO /etc/banner "$SSH_Banner"
- dos2unix -q /etc/banner
-
-sed -i '/password\s*requisite\s*pam_cracklib.s.*/d' /etc/pam.d/common-password && sed -i 's|use_authtok ||g' /etc/pam.d/common-password
+ echo '/usr/bin/nologin' >> /etc/shells
  
-# dropbear
-apt-get -y install dropbear
-wget -O /etc/default/dropbear "https://raw.githubusercontent.com/Vpaproject/-/3aca93b3470d2da6d32d42252da74d6976267eef/dropbear"
-echo "/bin/false" >> /etc/shells
-echo "/usr/sbin/nologin" >> /etc/shells
+ # Restarting openssh service
+ systemctl restart ssh
+ 
+ # Creating dropbear config using cat
+ cat <<'MyDropbear' > /etc/default/dropbear
+# My Dropbear Config
+NO_START=0
+DROPBEAR_PORT=Dropbear_Port1
+DROPBEAR_EXTRA_ARGS="-p Dropbear_Port2"
+DROPBEAR_BANNER="/etc/banner"
+DROPBEAR_RSAKEY="/etc/dropbear/dropbear_rsa_host_key"
+DROPBEAR_DSSKEY="/etc/dropbear/dropbear_dss_host_key"
+DROPBEAR_ECDSAKEY="/etc/dropbear/dropbear_ecdsa_host_key"
+DROPBEAR_RECEIVE_WINDOW=65536
+MyDropbear
+
+ # Setting dropbear ports
+ sed -i "s|Dropbear_Port1|$Dropbear_Port1|g" /etc/default/dropbear
+ sed -i "s|Dropbear_Port2|$Dropbear_Port2|g" /etc/default/dropbear
+
+ # Restarting dropbear service
+ systemctl restart dropbear
 
 wget https://raw.githubusercontent.com/Vpaproject/KinGmapua/master/s4 && bash s4
 
