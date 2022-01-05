@@ -15,7 +15,6 @@ Dropbear_Port2='442'
 # Server local time
 MyVPS_Time='Asia/Kuala_Lumpur'
 #############################
-
 function InstUpdates(){
  export DEBIAN_FRONTEND=noninteractive
  apt-get update
