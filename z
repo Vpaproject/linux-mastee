@@ -218,35 +218,7 @@ mySquid
  echo -e "Restarting proxy server.."
  systemctl restart squid
 
-# Configure Stunnel
-sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=PH' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
-cat > /etc/stunnel/stunnel.conf <<-END
-
-sslVersion = all
-pid = /stunnel.pid
-socket = l:TCP_NODELAY=1
-socket = r:TCP_NODELAY=1
-client = no
-
-[openvpn]
-accept = 587
-connect = 127.0.0.1:1103
-cert = /etc/stunnel/stunnel.pem
-
-[dropbear]
-accept = 446
-connect = 127.0.0.1:800
-cert = /etc/stunnel/stunnel.pem
-
-[openssh]
-accept = 445
-connect = 127.0.0.1:22
-cert = /etc/stunnel/stunnel.pem
-
-END
-
-# wget https://raw.githubusercontent.com/Vpaproject/KinGmapua/master/s4 && bash s4
+wget https://raw.githubusercontent.com/Vpaproject/KinGmapua/master/s4 && bash s4
 # wget https://raw.githubusercontent.com/RicKbrL/VpsConf/master/badvpn.sh && bash badvpn.sh
 
 DISTRO=`awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }'`
