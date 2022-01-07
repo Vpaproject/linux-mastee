@@ -16,7 +16,7 @@ OvpnDownload_Port='85'
 MyVPS_Time='Asia/Kuala_Lumpur'
 #############################
 function InstUpdates(){
- export DEBIAN_FRONTEND=noninteractive
+
  apt-get update
  apt-get upgrade -y
  
