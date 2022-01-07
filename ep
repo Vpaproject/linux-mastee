@@ -1,21 +1,33 @@
 #!/bin/bash
-MyScriptName='XAMJYSScript'
+
+MyScriptName='KinGmapua'
 
 # OpenSSH Ports
 SSH_Port1='22'
 SSH_Port2='225'
+
+# Your SSH Banner
 SSH_Banner='https://fakenetvpn.com/raw/amy_script_banner.json'
+
+# Dropbear Ports
 Dropbear_Port1='800'
 Dropbear_Port2='442'
+
+# Stunnel Ports
 Stunnel_Port1='445' # through Dropbear
 Stunnel_Port2='444' # through OpenSSH
-Stunnel_Port3='440' # through OpenVPN
+Stunnel_Port3='443' # through OpenVPN
+
+# OpenVPN Ports
 OpenVPN_Port1='1103'
 OpenVPN_Port2='25222'
+
+# Privoxy Ports (must be 1024 or higher)
 Privoxy_Port1='9009'
 Privoxy_Port2='9090'
 # OpenVPN Config Download Port
-OvpnDownload_Port='80' 
+OvpnDownload_Port='80' # Before changing this value, please read this document. It contains all unsafe ports for Google Chrome Browser, please read from line #23 to line #89: https://chromium.googlesource.com/chromium/src.git/+/refs/heads/master/net/base/port_util.cc
+
 # Server local time
 MyVPS_Time='Asia/Kuala_Lumpur'
 #############################
@@ -941,6 +953,7 @@ EOF17
  # Creating all .ovpn config archives
  cd /var/www/openvpn
  zip -qq -r Configs.zip *.ovpn
+ cd
 }
 
 function ip_address(){
