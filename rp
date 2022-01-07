@@ -1007,8 +1007,14 @@ EOF17
  clear
  cd ~
 
- # Running sysinfo 
- bash /etc/profile.d/barts.sh
+#import menu
+apt-get install unzip
+cd /usr/bin/
+wget "https://raw.githubusercontent.com/xamjyss143/VPS/master/menu.zip" 
+unzip menu.zip
+chmod +x /usr/bin/*
+sed -i $MYIP2 /usr/bin/user-add-pptp;
+rm menu.zip
  
  # Showing script's banner message
  ScriptMessage
