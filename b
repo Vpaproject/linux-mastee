@@ -20,8 +20,8 @@ Stunnel_Port1='143' # through Dropbear
 Stunnel_Port2='144' # through OpenSSH
 
 # OpenVPN Ports
-OpenVPN_Port1='1194'
-OpenVPN_Port3='110'
+OpenVPN_Port1='1103'
+OpenVPN_Port3='25222'
 OpenVPN_Port2='69' # take note when you change this port, openvpn sun noload config will not work
 
 # Privoxy Ports (must be 1024 or higher)
@@ -801,7 +801,7 @@ systemctl enable ohpserver
  
 # Squid Ports (must be 1024 or higher)
  Proxy_Port1='8000'
- Proxy_Port2='8118'
+ Proxy_Port2='8888'
  cat <<mySquid > /etc/squid/squid.conf
 acl VPN dst $(wget -4qO- http://ipinfo.io/ip)/32
 http_access allow VPN
@@ -861,7 +861,7 @@ client
 dev tun
 proto tcp
 remote $IPADDR $OpenVPN_Port1
-http-proxy $(curl -s http://ipinfo.io/ip || wget -q http://ipinfo.io/ip) $Proxy_Port
+http-proxy $(curl -s http://ipinfo.io/ip || wget -q http://ipinfo.io/ip) $Proxy_Port1
 resolv-retry infinite
 route-method exe
 resolv-retry infinite
