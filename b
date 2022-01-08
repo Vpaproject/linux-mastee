@@ -1105,13 +1105,7 @@ function ScriptMessage(){
 #############################
 #############################
 
- # First thing to do is check if this machine is Debian
- source /etc/os-release
-if [[ "$ID" != 'ubuntu' ]]; then
- ScriptMessage
- echo -e "[\e[1;31mError\e[0m] This script is for Ubuntu only, exting..." 
- exit 1
-fi
+ 
 
  # Now check if our machine is in root user, if not, this script exits
  # If you're on sudo user, run `sudo su -` first before running this script
