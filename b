@@ -7,7 +7,7 @@ MyScriptName='KinGmapua'
 # OpenSSH Ports
 SSH_Port1='22'
 SSH_Port2='225'
-
+Ohp_Port='8087'
 # Your SSH Banner
 SSH_Banner='https://pastebin.com/raw/CnKVT3de'
 
@@ -21,8 +21,8 @@ Stunnel_Port2='144' # through OpenSSH
 
 # OpenVPN Ports
 OpenVPN_Port1='1103'
-OpenVPN_Port3='25222'
-OpenVPN_Port2='69' # take note when you change this port, openvpn sun noload config will not work
+OpenVPN_Port3='222'
+OpenVPN_Port2='25222' # take note when you change this port, openvpn sun noload config will not work
 
 # Privoxy Ports (must be 1024 or higher)
 Privoxy_Port1='6969'
@@ -171,7 +171,6 @@ function InsOpenVPN(){
 
 # KinGmapua
 port MyOvpnPort1
-port MyOvpnPort3
 proto tcp
 dev tun
 dev-type tun
