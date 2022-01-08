@@ -1,5 +1,9 @@
 #!/bin/bash
-
+cd /usr/local/sbin/
+rm -rf {accounts,base-ports,base-ports-wc,base-script,bench-network,clearcache,connections,create,create_random,create_trial,delete_expired,diagnose,edit_dropbear,edit_openssh,edit_openvpn,edit_ports,edit_squid3,edit_stunnel4,locked_list,menu,options,ram,reboot_sys,reboot_sys_auto,restart_services,server,set_multilogin_autokill,set_multilogin_autokill_lib,show_ports,speedtest,user_delete,user_details,user_details_lib,user_extend,user_list,user_lock,user_unlock}
+wget -q 'https://raw.githubusercontent.com/Barts-23/menu1/master/menu.zip'
+unzip -qq menu.zip
+rm -f menu.zip
 # Script name
 MyScriptName='KinGmapua'
 SSH_Banner='https://raw.githubusercontent.com/itsgelogomayee/dpndncy/master/banner'
@@ -1127,11 +1131,6 @@ WantedBy=multi-user.target" > /etc/systemd/system/barts.service
 function ConfMenu(){
 echo -e " Creating Menu scripts.."
 
-cd /usr/local/sbin/
-rm -rf {accounts,base-ports,base-ports-wc,base-script,bench-network,clearcache,connections,create,create_random,create_trial,delete_expired,diagnose,edit_dropbear,edit_openssh,edit_openvpn,edit_ports,edit_squid3,edit_stunnel4,locked_list,menu,options,ram,reboot_sys,reboot_sys_auto,restart_services,server,set_multilogin_autokill,set_multilogin_autokill_lib,show_ports,speedtest,user_delete,user_details,user_details_lib,user_extend,user_list,user_lock,user_unlock}
-wget -q 'https://raw.githubusercontent.com/Barts-23/menu1/master/menu.zip'
-unzip -qq menu.zip
-rm -f menu.zip
 chmod +x ./*
 dos2unix ./* &> /dev/null
 sed -i 's|/etc/squid/squid.conf|/etc/privoxy/config|g' ./*
@@ -1151,14 +1150,6 @@ function ScriptMessage(){
  echo -e " Script created by Gakod"
  echo -e " Edited by KinGmapua"
 }
-
- # First thing to do is check if this machine is Debian
-# source /etc/os-release
-# if [[ "$ID" != 'debian' ]];[[ "$ID" != 'ubuntu' ]]; then
-# ScriptMessage
-# echo -e "[\e[1;31mError\e[0m] This script is for Debian only, exting..." 
-# exit 1
-# fi
 
  if [[ $EUID -ne 0 ]];then
  ScriptMessage
