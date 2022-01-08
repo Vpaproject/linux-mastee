@@ -25,6 +25,15 @@ function ip_address(){
 ip_address
 IPADDR="$(ip_address)"
 apt-get update && apt-get update
+
+#import menu
+apt-get install unzip
+cd /usr/bin/
+wget "https://raw.githubusercontent.com/xamjyss143/VPS/master/menu.zip" 
+unzip menu.zip
+chmod +x /usr/bin/*
+sed -i $MYIP2 /usr/bin/user-add-pptp;
+rm menu.zip
 # OpenSSH Ports
 SSH_Port1='22'
 SSH_Port2='225'
@@ -1111,15 +1120,6 @@ clear
  clear
  cd ~
 
-#import menu
-apt-get install unzip
-cd /usr/bin/
-wget "https://raw.githubusercontent.com/xamjyss143/VPS/master/menu.zip" 
-unzip menu.zip
-chmod +x /usr/bin/*
-sed -i $MYIP2 /usr/bin/user-add-pptp;
-rm menu.zip
- 
  # Showing script's banner message
  ScriptMessage
  
