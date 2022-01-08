@@ -19,7 +19,7 @@ Dropbear_Port2='442'
 MyVPS_Time='Asia/Kuala_Lumpur'
 #############################
 
-function InstUpdates(){
+
  apt-get update
  apt-get upgrade -y
  
